@@ -1,6 +1,7 @@
-
-
 export const EmployeeManagement = () => {
+
+
+ 
     return (
       <div className="emp-wrapper bg-white shadow-md rounded p-5 w-1/3">
         <h2 className="text-3xl text-center font-semibold mb-5">
@@ -34,7 +35,8 @@ export const EmployeeManagement = () => {
           />
         </div>
         <div className="btn-group text-center">
-            <button className="w-1/2 bg-indigo-500 text-white py-3 rounded">
+            <button className="w-1/2 bg-indigo-500 text-white py-3 rounded"
+            onClick={handleAddEmp}>
                 Add New Emp
             </button>
 
