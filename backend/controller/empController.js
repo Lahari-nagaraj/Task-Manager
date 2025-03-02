@@ -17,6 +17,6 @@ exports.getAllEmp = async(req, res)=>{
         res.json(emp);
     }catch(error){
             cosole.log("Error while saving emp",error);
-            res.status(500).json({"error": "Internal Server error"})
+            res.status(500).json({"error": "Internal Server error"});
     }
 }

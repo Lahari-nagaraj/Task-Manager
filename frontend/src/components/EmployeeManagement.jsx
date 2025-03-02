@@ -1,6 +1,24 @@
+import axios from "axios";
+
 export const EmployeeManagement = () => {
 
+    const [empId, setEmpId] = useState("");
+    const [empName, setEmpName] = useState("");
+    const [empSkills, setEmpSkills] = useState("");
 
+    const handleAddEmp =async (e) => {
+      e.preventDefault();
+
+      try{
+          const res = await axios.post("http://localhost:5500/api/emp/create", {empId, empName, empSkills})
+          setEmpId("");
+          setEmpName("");
+          setEmpSkills("");
+      }catch(error){
+          console.log("Error creating new Emp:",error);
+      }
+
+    }
  
     return (
       <div className="emp-wrapper bg-white shadow-md rounded p-5 w-1/3">
@@ -14,6 +32,8 @@ export const EmployeeManagement = () => {
             type="text"
             placeholder="Enter Emp id"
             className="border w-full p-2"
+            value={empId}
+            onChange={(e) => setEmpId(e.target.value)}
           />
         </div>
 
@@ -23,6 +43,8 @@ export const EmployeeManagement = () => {
             type="text"
             placeholder="Enter Emp name"
             className="border w-full p-2"
+            value={empName}
+            onChange={(e) => setEmpName(e.target.value)}
           />
         </div>
 
@@ -32,14 +54,17 @@ export const EmployeeManagement = () => {
             type="text"
             placeholder="Enter Emp Skills"
             className="border w-full p-2"
+            value={empSkills}
+            onChange={(e) => setEmpSkills(e.target.value)}
           />
         </div>
         <div className="btn-group text-center">
-            <button className="w-1/2 bg-indigo-500 text-white py-3 rounded"
-            onClick={handleAddEmp}>
-                Add New Emp
-            </button>
-
+          <button
+            className="w-1/2 bg-indigo-500 text-white py-3 rounded"
+            onClick={handleAddEmp}
+          >
+            Add New Emp
+          </button>
         </div>
       </div>
     );

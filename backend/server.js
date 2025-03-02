@@ -13,6 +13,7 @@ mongoose.connect(MONGO_URI)
 
 app.use(express.json());
 app.use("/api/emp",empRoutes);
+//app.use("/api/task",taskRoutes);
 
 const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => console.log("Server running on Port",PORT));
