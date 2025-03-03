@@ -4,10 +4,11 @@ exports.createEmp = async(req, res) => {
     try{
     const {empId, empName, empSkills} = req.body;
     const emp = new Emp({empId, empName, empSkills});
+    console.log("New emp:", emp);
     await emp.save();
     res.json(emp);
 }catch(error){
-    cosole.log("Error while saving emp",error);
+    console.log("Error while saving emp",error);
     res.status(500).json({"error": "Internal Server error"})
 }
 }
