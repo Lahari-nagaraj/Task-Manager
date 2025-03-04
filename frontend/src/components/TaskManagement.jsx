@@ -1,4 +1,4 @@
-export const TaskManagement = () => {
+export const TaskManagement = ({employees}) => {
   return (
     <div className="task-wrapper bg-white shadow-md rounded p-5 w-7/12">
       <h2 className="text-3xl text-center font-semibold mb-5">Assign Task</h2>
