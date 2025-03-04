@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export const EmployeeManagement = () => {
+export const EmployeeManagement = ({employees}) => {
 
     const [empId, setEmpId] = useState("");
     const [empName, setEmpName] = useState("");

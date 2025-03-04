@@ -25,6 +25,15 @@ export const TaskManagement = () => {
         <label className="block mb-2">Select Emp</label>
         <select className="border w-full p-2">
             <option value="">Select Employee</option>
+
+            {
+              employees.map((emp)=>(
+                <option key={emp.empId} value={emp.empName}>
+                  {emp.empName}
+                </option>
+              ))
+            }
+
         </select>
       </div>
       <div className="btn-group text-center">
