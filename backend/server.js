@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 
 const empRoutes = require("./routes/empRoute");
-
+const taskRoutes = require("./routes/taskRoute")
 
 app.use(express.json());
 app.use(cors());
