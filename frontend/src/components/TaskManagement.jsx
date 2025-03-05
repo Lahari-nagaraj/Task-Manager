@@ -1,43 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const TaskManagement = ({ employees }) => {
   const [taskTitle, setTaskTitle] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [categories, setCategories] = useState({});
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleTaskSuggestion = async (e) => {
     const inputValue = e.target.value;
     setTaskTitle(inputValue);
+  };
 
-    if (inputValue.length > 2) {
+  const handleGenerateSuggestions = async () => {
+    if (taskTitle.length > 0) {
       try {
         const response = await axios.post(
           "http://localhost:5500/api/task/suggest",
-          { input: inputValue }
+          { input: taskTitle }
         );
 
-        console.log("API Response:", response.data);
-
-        if (
-          Array.isArray(response.data.suggestions) &&
-          response.data.suggestions.length > 0
-        ) {
-          setSuggestions(response.data.suggestions);
-          setShowSuggestions(true);
-        } else {
-          setSuggestions([]);
-          setShowSuggestions(false);
+        if (response.data && response.data.suggestions) {
+          // Get only the bullet points from the General category
+          const rawSuggestions = Object.values(response.data.suggestions).flat();
+          const processedSuggestions = rawSuggestions.filter(suggestion => 
+            typeof suggestion === 'string' && 
+            !suggestion.startsWith('**') && 
+            suggestion.trim() !== ''
+          ).slice(0, 6); // Limit to 6 suggestions
+          
+          setSuggestions(processedSuggestions);
         }
       } catch (error) {
         console.error("Error fetching suggestions:", error);
         setSuggestions([]);
-        setShowSuggestions(false);
       }
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
     }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setTaskDescription(suggestion);
+    setSuggestions([]); // Clear suggestions after selection
+  };
+
+  // Function to categorize suggestions into separate lists
+  const processSuggestions = (suggestions) => {
+    const categories = {};
+    let currentCategory = "General";
+
+    suggestions.forEach((suggestion) => {
+      if (typeof suggestion !== "string") return; // Ensure suggestion is a string
+
+      if (suggestion.startsWith("**") && suggestion.endsWith("**")) {
+        // If suggestion is a category title, update the current category
+        currentCategory = suggestion.replace(/\*\*/g, "").trim();
+      } else {
+        // Add the suggestion under the current category
+        if (!categories[currentCategory]) {
+          categories[currentCategory] = [];
+        }
+        categories[currentCategory].push(suggestion);
+      }
+    });
+
+    return categories;
   };
 
   return (
@@ -45,7 +72,7 @@ export const TaskManagement = ({ employees }) => {
       <h2 className="text-3xl text-center font-semibold mb-5">Assign Task</h2>
 
       {/* Task Title Input */}
-      <div className="input-group mb-4 relative">
+      <div className="input-group mb-4">
         <label className="block mb-2">Enter Task Title</label>
         <input
           type="text"
@@ -54,24 +81,6 @@ export const TaskManagement = ({ employees }) => {
           value={taskTitle}
           onChange={handleTaskSuggestion}
         />
-
-        {/* Suggestions List */}
-        {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute w-full border bg-white rounded shadow-lg z-10 mt-1">
-            {suggestions.map((s, i) => (
-              <li
-                key={i}
-                className="p-2 hover:bg-gray-200 cursor-pointer"
-                onClick={() => {
-                  setTaskTitle(s);
-                  setShowSuggestions(false);
-                }}
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
       {/* Task Description Input */}
@@ -80,8 +89,28 @@ export const TaskManagement = ({ employees }) => {
         <textarea
           placeholder="Enter Task description"
           className="border w-full p-2"
+          value={taskDescription}
+          onChange={(e) => setTaskDescription(e.target.value)}
         />
       </div>
+
+      {/* Display Suggestions */}
+      {suggestions.length > 0 && (
+        <div className="mb-4 p-3 border rounded">
+          <h3 className="font-semibold mb-2">Suggested Descriptions:</h3>
+          <ul className="list-disc pl-5">
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="cursor-pointer hover:text-indigo-600 mb-1"
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Employee Selection */}
       <div className="input-group mb-4">
@@ -100,6 +129,12 @@ export const TaskManagement = ({ employees }) => {
       <div className="btn-group text-center">
         <button className="w-1/2 bg-indigo-500 text-white py-3 rounded">
           Assign Task
+        </button>
+        <button 
+          onClick={handleGenerateSuggestions} 
+          className="w-1/3 rounded bg-indigo-500 text-white py-3 ml-2"
+        >
+          Generate AI Task Suggestions
         </button>
       </div>
     </div>
