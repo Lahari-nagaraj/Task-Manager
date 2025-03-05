@@ -77,9 +77,14 @@ export const TaskManagement = ({ employees }) => {
   const handleAssignTask = async(e) => {
     try{
          const res= await axios.post(
-          "http://localhost:5500/api/task/create")
-    }catch(error){
+          "http://localhost:5500/api/task/create",{taskTitle,taskDesc,assignedEmp});
+          setTaskTitle("");
+          setTaskDesc("");
+          setAssignedEmp("");
+          setSuggestions([])
 
+    }catch(error){
+      console.log("Error creating task:",error);
     }
   }
 
@@ -141,7 +146,7 @@ export const TaskManagement = ({ employees }) => {
 
       
       <div className="btn-group text-center">
-        <button className="w-1/2 bg-indigo-500 text-white py-3 rounded">
+        <button onClick={handleAssignTask} className="w-1/2 bg-indigo-500 text-white py-3 rounded">
           Assign Task
         </button>
         <button 

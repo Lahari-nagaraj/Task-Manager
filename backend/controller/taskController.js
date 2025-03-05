@@ -9,9 +9,9 @@ exports.suggestTask = async (req, res)=> {
 }
 
 exports.createTask = async(res,res) => {
-    const {title, desc, empName} = req.body;
+    const {taskTitle,taskDesc, empName} = req.body;
     const estimatedTime = await getTaskPrediction(desc);
-    const task = new Task({title, empName, estimatedTime});
+    const task = new Task({taskTitle,taskDesc, empName, estimatedTime});
     await task.save();
     res.json(task);
 }
