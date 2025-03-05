@@ -1,10 +1,11 @@
 const axios = require("axios");
 const { GoogleAuth} = require("google-auth-library");
 
-const getTaskSuggesstion = async(inputText)=> {
+const getTaskSuggestion = async(inputText)=> {
     try{
         const response = await axios.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+
             {
                 contents: [
                     {parts: [
@@ -16,6 +17,7 @@ const getTaskSuggesstion = async(inputText)=> {
                 params:{key:process.env.GOOGLE_PALM_API_KEY}
             }
         )
+        console.log("Responses from GEmini :",response.data);
         return response.data?.candidates?.[0].content?.parts?.[0]?.text || "No Suggessions"
     }catch(error){
         console.error("Error in API:",error?.response?.data || error.message);
@@ -23,4 +25,4 @@ const getTaskSuggesstion = async(inputText)=> {
     }
 }
 
-module.exports = {getTaskSuggesstion};
+module.exports = {getTaskSuggestion};
