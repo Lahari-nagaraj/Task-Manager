@@ -22,13 +22,21 @@ export const TaskManagement = ({ employees }) => {
         );
 
         if (response.data && response.data.suggestions) {
-          // Get only the bullet points from the General category
-          const rawSuggestions = Object.values(response.data.suggestions).flat();
-          const processedSuggestions = rawSuggestions.filter(suggestion => 
-            typeof suggestion === 'string' && 
-            !suggestion.startsWith('**') && 
-            suggestion.trim() !== ''
-          ).slice(0, 6); // Limit to 6 suggestions
+          
+          const suggestions = Array.isArray(response.data.suggestions) 
+            ? response.data.suggestions 
+            : Object.values(response.data.suggestions).flat();
+          
+          
+          const processedSuggestions = suggestions
+            .filter(suggestion => 
+              typeof suggestion === 'string' && 
+              suggestion.trim() !== '' &&
+              !suggestion.includes('Here are some suggestions') &&
+              !suggestion.includes('task name') &&
+              !suggestion.includes('categorized')
+            )
+            .slice(0, 6);
           
           setSuggestions(processedSuggestions);
         }
@@ -41,22 +49,21 @@ export const TaskManagement = ({ employees }) => {
 
   const handleSuggestionClick = (suggestion) => {
     setTaskDescription(suggestion);
-    setSuggestions([]); // Clear suggestions after selection
+    setSuggestions([]); 
   };
 
-  // Function to categorize suggestions into separate lists
+
   const processSuggestions = (suggestions) => {
     const categories = {};
     let currentCategory = "General";
 
     suggestions.forEach((suggestion) => {
-      if (typeof suggestion !== "string") return; // Ensure suggestion is a string
-
+      if (typeof suggestion !== "string") return; 
       if (suggestion.startsWith("**") && suggestion.endsWith("**")) {
-        // If suggestion is a category title, update the current category
+        
         currentCategory = suggestion.replace(/\*\*/g, "").trim();
       } else {
-        // Add the suggestion under the current category
+
         if (!categories[currentCategory]) {
           categories[currentCategory] = [];
         }
@@ -71,7 +78,6 @@ export const TaskManagement = ({ employees }) => {
     <div className="task-wrapper bg-white shadow-md rounded p-5 w-7/12">
       <h2 className="text-3xl text-center font-semibold mb-5">Assign Task</h2>
 
-      {/* Task Title Input */}
       <div className="input-group mb-4">
         <label className="block mb-2">Enter Task Title</label>
         <input
@@ -83,7 +89,7 @@ export const TaskManagement = ({ employees }) => {
         />
       </div>
 
-      {/* Task Description Input */}
+     
       <div className="input-group mb-4">
         <label className="block mb-2">Enter Task Description</label>
         <textarea
@@ -94,7 +100,7 @@ export const TaskManagement = ({ employees }) => {
         />
       </div>
 
-      {/* Display Suggestions */}
+      
       {suggestions.length > 0 && (
         <div className="mb-4 p-3 border rounded">
           <h3 className="font-semibold mb-2">Suggested Descriptions:</h3>
@@ -112,7 +118,6 @@ export const TaskManagement = ({ employees }) => {
         </div>
       )}
 
-      {/* Employee Selection */}
       <div className="input-group mb-4">
         <label className="block mb-2">Select Employee</label>
         <select className="border w-full p-2">
@@ -125,7 +130,7 @@ export const TaskManagement = ({ employees }) => {
         </select>
       </div>
 
-      {/* Assign Task Button */}
+      
       <div className="btn-group text-center">
         <button className="w-1/2 bg-indigo-500 text-white py-3 rounded">
           Assign Task
